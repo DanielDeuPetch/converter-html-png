@@ -17,7 +17,13 @@ class PrintReceiptFlow {
                 // const puppeteer = require('puppeteer');
                 // const browser = await puppeteer.launch();
                 const chromium = require('chrome-aws-lambda');
-                const browser = yield chromium.puppeteer.launch();
+                const puppeteer = require('puppeteer-core');
+                //const browser = await chromium.puppeteer.launch();
+                const browser = yield puppeteer.launch({
+                    args: chromium.args,
+                    executablePath: yield chromium.executablePath,
+                    headless: true,
+                });
                 const page = yield browser.newPage();
                 yield page.setContent(file.content);
                 const image = yield page.screenshot();

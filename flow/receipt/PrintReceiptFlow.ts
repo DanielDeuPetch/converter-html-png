@@ -18,6 +18,7 @@ class PrintReceiptFlow {
     } catch (error) {
       console.log(error)
     }
+    
 
     return null
   }

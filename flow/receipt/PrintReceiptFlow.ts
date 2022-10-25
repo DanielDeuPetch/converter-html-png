@@ -1,3 +1,5 @@
+import console = require("console");
+
 class PrintReceiptFlow {
   async issueReceipt(req) {
     try {
@@ -7,11 +9,38 @@ class PrintReceiptFlow {
       const chromium = require('chrome-aws-lambda');
       const puppeteer = require('puppeteer-core');
       //const browser = await chromium.puppeteer.launch();
-      const browser = await puppeteer.launch({
-        args: chromium.args,
-        executablePath: await chromium.executablePath,
-        headless: true,
-      });
+      const options = process.env.AWS_REGION
+        ? {
+          args: chromium.args,
+          executablePath: await chromium.executablePath,
+          headless: chromium.headless
+        }
+        : {
+          args: [],
+          executablePath:
+            process.platform === 'win32'
+              ? 'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe'
+              : process.platform === 'linux'
+                ? '/usr/bin/google-chrome'
+                : '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
+        };
+
+
+
+
+
+
+      var path = await chromium.executablePath;
+      console.log(path)
+      // const browser = await puppeteer.launch({
+      //   args: [...chromium.args, '--hide-scrollbars', '--disable-web-security'],
+      //   defaultViewport: chromium.defaultViewport,
+      //   executablePath: await chromium.executablePath,
+      //   headless: true,
+      //   ignoreHTTPSErrors: true,
+      // });
+
+      const browser = await puppeteer.launch(options);
       const page = await browser.newPage();
       await page.setContent(file.content);
       const image = await page.screenshot();

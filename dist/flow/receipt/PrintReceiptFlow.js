@@ -9,6 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const console = require("console");
 class PrintReceiptFlow {
     issueReceipt(req) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -19,11 +20,30 @@ class PrintReceiptFlow {
                 const chromium = require('chrome-aws-lambda');
                 const puppeteer = require('puppeteer-core');
                 //const browser = await chromium.puppeteer.launch();
-                const browser = yield puppeteer.launch({
-                    args: chromium.args,
-                    executablePath: yield chromium.executablePath,
-                    headless: true,
-                });
+                const options = process.env.AWS_REGION
+                    ? {
+                        args: chromium.args,
+                        executablePath: yield chromium.executablePath,
+                        headless: chromium.headless
+                    }
+                    : {
+                        args: [],
+                        executablePath: process.platform === 'win32'
+                            ? 'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe'
+                            : process.platform === 'linux'
+                                ? '/usr/bin/google-chrome'
+                                : '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
+                    };
+                var path = yield chromium.executablePath;
+                console.log(path);
+                // const browser = await puppeteer.launch({
+                //   args: [...chromium.args, '--hide-scrollbars', '--disable-web-security'],
+                //   defaultViewport: chromium.defaultViewport,
+                //   executablePath: await chromium.executablePath,
+                //   headless: true,
+                //   ignoreHTTPSErrors: true,
+                // });
+                const browser = yield puppeteer.launch(options);
                 const page = yield browser.newPage();
                 yield page.setContent(file.content);
                 const image = yield page.screenshot();

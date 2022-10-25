@@ -1,5 +1,3 @@
-import console = require("console");
-
 class PrintReceiptFlow {
   async issueReceipt(req) {
     try {
